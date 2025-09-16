@@ -1,21 +1,22 @@
 plugins {
     kotlin("jvm") version "1.9.0" apply false
+    kotlin("multiplatform") version "1.9.0" apply false
+    kotlin("plugin.serialization") version "1.9.0" apply false
+    id("com.github.johnrengelman.shadow") version "8.1.1" apply false
+    id("org.jetbrains.kotlinx.kover") version "0.7.4" apply false
 }
 
 allprojects {
     repositories {
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 
 subprojects {
-    apply(plugin = "org.jetbrains.kotlin.jvm")
     group = "tech.ceesar.ceesarwallet"
     version = "0.1.0"
-    dependencies {
-        add("implementation", kotlin("stdlib"))
-        add("testImplementation", kotlin("test"))
-    }
+    
     tasks.withType<Test> {
         useJUnitPlatform()
     }

@@ -1,0 +1,14 @@
+{
+  "labels": [
+    {
+      "name": "FRAUD",
+      "description": "Fraudulent transaction",
+      "labelType": "FRAUD"
+    },
+    {
+      "name": "LEGIT",
+      "description": "Legitimate transaction",
+      "labelType": "FRAUD"
+    }
+  ]
+}

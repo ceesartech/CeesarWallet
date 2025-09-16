@@ -1,0 +1,26 @@
+{
+  "entityTypes": [
+    {
+      "name": "customer",
+      "description": "Customer entity type",
+      "eventVariableNames": [
+        "ip",
+        "deviceId",
+        "geo",
+        "userTier",
+        "orderNotional",
+        "userVelocity1m",
+        "ipVelocity1m",
+        "deviceVelocity1m",
+        "geoVelocity1m",
+        "symbolVelocity1m",
+        "assetClassVelocity1m",
+        "authType",
+        "success",
+        "amount",
+        "currency",
+        "paymentMethod"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "symbols": [
+    "AAPL"
+  ],
+  "date_range": {
+    "start": "2023-02-02T04:07:52.657875+00:00",
+    "end": "2023-08-20T04:07:52.657875+00:00"
+  },
+  "features": [
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "sma_20",
+    "rsi_14",
+    "macd",
+    "macd_signal",
+    "bb_upper",
+    "bb_middle",
+    "bb_lower"
+  ],
+  "data_shape": [
+    200,
+    18
+  ],
+  "sample_size": 200
+}

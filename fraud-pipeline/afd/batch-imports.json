@@ -1,0 +1,19 @@
+{
+  "batchImports": [
+    {
+      "jobId": "pre-trade-batch-import-001",
+      "status": "IN_PROGRESS",
+      "eventTypeName": "pre-trade-event",
+      "iamRoleArn": "arn:aws:iam::123456789012:role/FraudDetectorBatchImportRole",
+      "inputPath": "s3://fraud-detection-data/input/pre-trade-events-labeled.csv",
+      "outputPath": "s3://fraud-detection-data/output/pre-trade-import-results.csv",
+      "createdTime": "2024-01-01T00:00:00Z",
+      "lastUpdatedTime": "2024-01-01T00:00:00Z",
+      "finishedTime": null,
+      "failureReason": null,
+      "processedRecordsCount": 5000,
+      "totalRecordsCount": 10000,
+      "failedRecordsCount": 0
+    }
+  ]
+}

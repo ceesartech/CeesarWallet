@@ -69,3 +69,25 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Expo ###
+.expo/
+.expo-shared/
+
+### Node.js ###
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+### React Native ###
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+### Metro ###
+.metro-health-check*

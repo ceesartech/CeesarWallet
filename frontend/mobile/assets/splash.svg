@@ -1,0 +1,19 @@
+<svg width="1284" height="2778" viewBox="0 0 1284 2778" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d2d2d;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4aa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00b894;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1284" height="2778" fill="url(#grad1)"/>
+  <circle cx="642" cy="1000" r="200" fill="url(#grad2)"/>
+  <text x="642" y="1200" font-family="Arial, sans-serif" font-size="120" font-weight="bold" text-anchor="middle" fill="#00d4aa">CeesarTrader</text>
+  <text x="642" y="1350" font-family="Arial, sans-serif" font-size="60" text-anchor="middle" fill="#ffffff" opacity="0.8">Automated Trading Platform</text>
+  <text x="642" y="1600" font-family="Arial, sans-serif" font-size="40" text-anchor="middle" fill="#00d4aa">AI-Powered Trading</text>
+  <text x="642" y="1700" font-family="Arial, sans-serif" font-size="40" text-anchor="middle" fill="#00d4aa">Real-Time Fraud Detection</text>
+  <text x="642" y="1800" font-family="Arial, sans-serif" font-size="40" text-anchor="middle" fill="#00d4aa">Professional Tools</text>
+</svg>

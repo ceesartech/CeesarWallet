@@ -1,0 +1,40 @@
+{
+  "ruleVersions": [
+    {
+      "detectorId": "pre-trade-detector",
+      "ruleId": "high-velocity-rule",
+      "ruleVersion": "1.0",
+      "description": "High velocity trading rule",
+      "expression": "ipVelocity1m > 10 OR deviceVelocity1m > 10 OR geoVelocity1m > 10",
+      "language": "DETECTORPL",
+      "outcomes": ["REJECT"],
+      "lastUpdatedTime": "2024-01-01T00:00:00Z",
+      "createdTime": "2024-01-01T00:00:00Z",
+      "arn": "arn:aws:frauddetector:us-east-1:123456789012:detector/pre-trade-detector/rule/high-velocity-rule/version/1.0"
+    },
+    {
+      "detectorId": "pre-trade-detector",
+      "ruleId": "large-order-rule",
+      "ruleVersion": "1.0",
+      "description": "Large order size rule",
+      "expression": "orderNotional > 100000 AND userTier = 'FREE'",
+      "language": "DETECTORPL",
+      "outcomes": ["REVIEW"],
+      "lastUpdatedTime": "2024-01-01T00:00:00Z",
+      "createdTime": "2024-01-01T00:00:00Z",
+      "arn": "arn:aws:frauddetector:us-east-1:123456789012:detector/pre-trade-detector/rule/large-order-rule/version/1.0"
+    },
+    {
+      "detectorId": "pre-trade-detector",
+      "ruleId": "suspicious-geo-rule",
+      "ruleVersion": "1.0",
+      "description": "Suspicious geographic location rule",
+      "expression": "geo IN ['CN', 'RU', 'KP']",
+      "language": "DETECTORPL",
+      "outcomes": ["REJECT"],
+      "lastUpdatedTime": "2024-01-01T00:00:00Z",
+      "createdTime": "2024-01-01T00:00:00Z",
+      "arn": "arn:aws:frauddetector:us-east-1:123456789012:detector/pre-trade-detector/rule/suspicious-geo-rule/version/1.0"
+    }
+  ]
+}

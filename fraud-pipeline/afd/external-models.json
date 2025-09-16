@@ -1,0 +1,40 @@
+{
+  "externalModels": [
+    {
+      "modelEndpoint": "arn:aws:sagemaker:us-east-1:123456789012:endpoint/pre-trade-fraud-model",
+      "modelSource": "SAGEMAKER",
+      "role": {
+        "arn": "arn:aws:iam::123456789012:role/FraudDetectorSageMakerRole",
+        "name": "FraudDetectorSageMakerRole"
+      },
+      "inputConfiguration": {
+        "eventTypeName": "pre-trade-event",
+        "format": "JSON",
+        "useEventVariables": true,
+        "jsonInputTemplate": "{\"instances\": [{\"ip\": \"$ip\", \"deviceId\": \"$deviceId\", \"geo\": \"$geo\", \"userTier\": \"$userTier\", \"orderNotional\": $orderNotional, \"userVelocity1m\": $userVelocity1m, \"ipVelocity1m\": $ipVelocity1m, \"deviceVelocity1m\": $deviceVelocity1m, \"geoVelocity1m\": $geoVelocity1m, \"symbolVelocity1m\": $symbolVelocity1m, \"assetClassVelocity1m\": $assetClassVelocity1m, \"authType\": \"$authType\", \"success\": \"$success\", \"amount\": $amount, \"currency\": \"$currency\", \"paymentMethod\": \"$paymentMethod\"}]}"
+      },
+      "outputConfiguration": {
+        "format": "JSON",
+        "jsonKeyToVariableMap": {
+          "fraudScore": "fraudScore",
+          "fraudPrediction": "fraudPrediction"
+        },
+        "csvIndexToVariableMap": {}
+      },
+      "modelInputConfiguration": {
+        "eventTypeName": "pre-trade-event",
+        "format": "JSON",
+        "useEventVariables": true,
+        "jsonInputTemplate": "{\"instances\": [{\"ip\": \"$ip\", \"deviceId\": \"$deviceId\", \"geo\": \"$geo\", \"userTier\": \"$userTier\", \"orderNotional\": $orderNotional, \"userVelocity1m\": $userVelocity1m, \"ipVelocity1m\": $ipVelocity1m, \"deviceVelocity1m\": $deviceVelocity1m, \"geoVelocity1m\": $geoVelocity1m, \"symbolVelocity1m\": $symbolVelocity1m, \"assetClassVelocity1m\": $assetClassVelocity1m, \"authType\": \"$authType\", \"success\": \"$success\", \"amount\": $amount, \"currency\": \"$currency\", \"paymentMethod\": \"$paymentMethod\"}]}"
+      },
+      "modelOutputConfiguration": {
+        "format": "JSON",
+        "jsonKeyToVariableMap": {
+          "fraudScore": "fraudScore",
+          "fraudPrediction": "fraudPrediction"
+        },
+        "csvIndexToVariableMap": {}
+      }
+    }
+  ]
+}

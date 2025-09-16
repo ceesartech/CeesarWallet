@@ -1,0 +1,507 @@
+name: CeesarWallet CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ACCOUNT_ID: 476114151082
+
+jobs:
+  # Infrastructure Tests
+  infrastructure-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: infra/cdk/package-lock.json
+
+      - name: Install CDK dependencies
+        run: |
+          cd infra/cdk
+          npm ci
+
+      - name: Run CDK synth
+        run: |
+          cd infra/cdk
+          npm run synth
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Run CDK diff
+        run: |
+          cd infra/cdk
+          npm run diff
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  # Backend Tests
+  backend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: |
+          cd ml-algorithm
+          pip install -r requirements.txt
+
+      - name: Run Python tests
+        run: |
+          cd ml-algorithm
+          python -m pytest tests/ -v --cov=. --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./ml-algorithm/coverage.xml
+          flags: backend
+          name: backend-coverage
+
+      - name: Run security scan
+        run: |
+          cd ml-algorithm
+          pip install bandit safety
+          bandit -r src/ -f json -o bandit-report.json
+          safety check --json --output safety-report.json
+
+  # Frontend Web Tests
+  frontend-web-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/web/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend/web
+          npm ci
+
+      - name: Run type check
+        run: |
+          cd frontend/web
+          npm run type-check
+
+      - name: Run linting
+        run: |
+          cd frontend/web
+          npm run lint
+
+      - name: Run tests
+        run: |
+          cd frontend/web
+          npm run test -- --coverage --watchAll=false
+
+      - name: Build application
+        run: |
+          cd frontend/web
+          npm run build
+
+      - name: Run accessibility tests
+        run: |
+          cd frontend/web
+          npm install -g @axe-core/cli
+          axe http://localhost:3000 --exit
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./frontend/web/coverage/lcov.info
+          flags: frontend-web
+          name: frontend-web-coverage
+
+  # Frontend Mobile Tests
+  frontend-mobile-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/mobile/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend/mobile
+          npm ci
+
+      - name: Run type check
+        run: |
+          cd frontend/mobile
+          npm run type-check
+
+      - name: Run linting
+        run: |
+          cd frontend/mobile
+          npm run lint
+
+      - name: Run tests
+        run: |
+          cd frontend/mobile
+          npm run test -- --coverage --watchAll=false
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./frontend/mobile/coverage/lcov.info
+          flags: frontend-mobile
+          name: frontend-mobile-coverage
+
+  # Integration Tests
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-web-test, frontend-mobile-test]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd ml-algorithm
+          pip install -r requirements.txt
+          cd ../frontend/web
+          npm ci
+
+      - name: Start backend services
+        run: |
+          cd ml-algorithm
+          python -m trading.inference_service &
+          python -m trading.engine_service &
+          sleep 10
+
+      - name: Start frontend services
+        run: |
+          cd frontend/web
+          npm run dev &
+          sleep 15
+
+      - name: Run integration tests
+        run: |
+          cd ml-algorithm
+          python -m pytest tests/test_e2e.py -v
+
+      - name: Run API tests
+        run: |
+          cd frontend/web
+          npm run test:integration
+
+  # Security Scan
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Run Snyk security scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+  # Deploy Infrastructure
+  deploy-infrastructure:
+    runs-on: ubuntu-latest
+    needs: [infrastructure-test, security-scan]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: infra/cdk/package-lock.json
+
+      - name: Install CDK dependencies
+        run: |
+          cd infra/cdk
+          npm ci
+
+      - name: Bootstrap CDK
+        run: |
+          cd infra/cdk
+          npm run bootstrap
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Deploy infrastructure
+        run: |
+          cd infra/cdk
+          npm run deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Update SSM parameters
+        run: |
+          aws ssm put-parameter --name "/CeesarWallet/Deployment/Version" --value "${{ github.sha }}" --overwrite
+          aws ssm put-parameter --name "/CeesarWallet/Deployment/Timestamp" --value "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --overwrite
+
+  # Deploy Backend
+  deploy-backend:
+    runs-on: ubuntu-latest
+    needs: [backend-test, deploy-infrastructure]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd ml-algorithm
+          pip install -r requirements.txt
+
+      - name: Build Docker image
+        run: |
+          docker build -f Dockerfile.ml -t ceesar-wallet-ml:${{ github.sha }} .
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ceesar-wallet-ml
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -f Dockerfile.ml -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service --cluster ceesar-wallet-cluster --service ceesar-wallet-ml-service --force-new-deployment
+
+  # Deploy Frontend Web
+  deploy-frontend-web:
+    runs-on: ubuntu-latest
+    needs: [frontend-web-test, deploy-infrastructure]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/web/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend/web
+          npm ci
+
+      - name: Build application
+        run: |
+          cd frontend/web
+          npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync frontend/web/.next/static s3://ceesar-wallet-assets-${{ env.AWS_ACCOUNT_ID }}/static --delete
+          aws s3 sync frontend/web/public s3://ceesar-wallet-assets-${{ env.AWS_ACCOUNT_ID }}/public --delete
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+
+      - name: Deploy to Amplify
+        run: |
+          cd frontend/web
+          amplify push --yes
+
+  # Deploy Frontend Mobile
+  deploy-frontend-mobile:
+    runs-on: ubuntu-latest
+    needs: [frontend-mobile-test, deploy-infrastructure]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/mobile/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend/mobile
+          npm ci
+
+      - name: Install EAS CLI
+        run: npm install -g @expo/eas-cli
+
+      - name: Login to Expo
+        run: eas login --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android
+        run: |
+          cd frontend/mobile
+          eas build --platform android --non-interactive
+
+      - name: Build iOS
+        run: |
+          cd frontend/mobile
+          eas build --platform ios --non-interactive
+
+      - name: Submit to Google Play
+        run: |
+          cd frontend/mobile
+          eas submit --platform android --non-interactive
+        env:
+          GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+
+      - name: Submit to App Store
+        run: |
+          cd frontend/mobile
+          eas submit --platform ios --non-interactive
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+
+  # Post-deployment Tests
+  post-deployment-test:
+    runs-on: ubuntu-latest
+    needs: [deploy-backend, deploy-frontend-web, deploy-frontend-mobile]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd frontend/web
+          npm ci
+
+      - name: Run smoke tests
+        run: |
+          cd frontend/web
+          npm run test:smoke
+
+      - name: Run performance tests
+        run: |
+          cd frontend/web
+          npm run test:performance
+
+      - name: Run accessibility tests
+        run: |
+          cd frontend/web
+          npm run test:accessibility
+
+      - name: Health check
+        run: |
+          curl -f https://ceesarwallet.com/api/health || exit 1
+          curl -f https://ceesarwallet.com/api/market-data/AAPL || exit 1
+
+  # Notification
+  notify:
+    runs-on: ubuntu-latest
+    needs: [post-deployment-test]
+    if: always()
+    steps:
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        if: always()
+
+      - name: Notify Teams
+        uses: skitionek/notify-microsoft-teams@master
+        with:
+          webhook_url: ${{ secrets.TEAMS_WEBHOOK }}
+          status: ${{ job.status }}
+        if: always()

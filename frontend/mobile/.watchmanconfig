@@ -1,0 +1,12 @@
+{
+  "ignore_dirs": [
+    "node_modules",
+    ".git",
+    "build",
+    "dist",
+    "coverage",
+    ".expo",
+    "android",
+    "ios"
+  ]
+}

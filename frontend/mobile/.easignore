@@ -1,0 +1,47 @@
+# EAS Build ignore file
+# Reduce build size and prevent unnecessary files from being uploaded
+
+# Development files
+*.log
+*.tmp
+.env.local
+.env.development
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules (will be installed during build)
+node_modules/
+
+# Build artifacts
+build/
+dist/
+.expo/
+
+# Test files
+__tests__/
+*.test.js
+*.test.ts
+*.test.tsx
+*.spec.js
+*.spec.ts
+*.spec.tsx
+
+# Documentation
+*.md
+docs/
+
+# Git
+.git/
+.gitignore
+
+# Temporary files
+*.pid
+*.lock

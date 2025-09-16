@@ -1,0 +1,19 @@
+{
+  "outcomes": [
+    {
+      "name": "APPROVE",
+      "description": "Transaction approved",
+      "outcomeType": "FRAUD"
+    },
+    {
+      "name": "REJECT",
+      "description": "Transaction rejected",
+      "outcomeType": "FRAUD"
+    },
+    {
+      "name": "REVIEW",
+      "description": "Transaction requires manual review",
+      "outcomeType": "FRAUD"
+    }
+  ]
+}

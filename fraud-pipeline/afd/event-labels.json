@@ -1,0 +1,38 @@
+{
+  "eventLabels": [
+    {
+      "eventId": "evt_001",
+      "eventTypeName": "pre-trade-event",
+      "eventTimestamp": "2024-01-01T12:00:00Z",
+      "labelTimestamp": "2024-01-01T12:00:01Z",
+      "assignedLabel": "FRAUD",
+      "labelScore": 0.85,
+      "labeler": "system",
+      "labelingJobArn": "arn:aws:frauddetector:us-east-1:123456789012:labeling-job/pre-trade-labeling-001",
+      "eventVariables": {
+        "ip": "192.168.1.1",
+        "deviceId": "device_001",
+        "geo": "US",
+        "userTier": "FREE",
+        "orderNotional": 50000.0,
+        "userVelocity1m": 5,
+        "ipVelocity1m": 15,
+        "deviceVelocity1m": 5,
+        "geoVelocity1m": 5,
+        "symbolVelocity1m": 5,
+        "assetClassVelocity1m": 5,
+        "authType": "JWT",
+        "success": "true",
+        "amount": 50000.0,
+        "currency": "USD",
+        "paymentMethod": "BANK_TRANSFER"
+      },
+      "entities": {
+        "customer": {
+          "entityId": "cust_001",
+          "entityType": "customer"
+        }
+      }
+    }
+  ]
+}

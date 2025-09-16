@@ -1,0 +1,260 @@
+type MarketData {
+  symbol: String!
+  timestamp: AWSDateTime!
+  open: Float!
+  high: Float!
+  low: Float!
+  close: Float!
+  volume: Float!
+}
+
+type TradeSignal {
+  id: ID!
+  symbol: String!
+  side: String!
+  quantity: Float!
+  price: Float
+  orderType: String!
+  timestamp: AWSDateTime!
+  modelName: String!
+  confidence: Float
+  metadata: AWSJSON
+}
+
+type TradeExecution {
+  id: ID!
+  signalId: String!
+  symbol: String!
+  side: String!
+  executedPrice: Float!
+  executedQuantity: Float!
+  executionTime: AWSDateTime!
+  fees: Float!
+  status: String!
+  brokerOrderId: String
+  metadata: AWSJSON
+}
+
+type Position {
+  id: ID!
+  symbol: String!
+  side: String!
+  quantity: Float!
+  averagePrice: Float!
+  currentPrice: Float!
+  unrealizedPnL: Float!
+  realizedPnL: Float!
+  timestamp: AWSDateTime!
+  metadata: AWSJSON
+}
+
+type Portfolio {
+  id: ID!
+  userId: String!
+  totalValue: Float!
+  cashBalance: Float!
+  investedValue: Float!
+  totalPnL: Float!
+  dailyPnL: Float!
+  timestamp: AWSDateTime!
+  metadata: AWSJSON
+}
+
+type FraudAlert {
+  id: ID!
+  userId: String!
+  transactionId: String!
+  fraudScore: Float!
+  riskLevel: String!
+  reason: String!
+  timestamp: AWSDateTime!
+  metadata: AWSJSON
+}
+
+type RiskAlert {
+  id: ID!
+  userId: String!
+  riskType: String!
+  currentValue: Float!
+  threshold: Float!
+  message: String!
+  timestamp: AWSDateTime!
+  metadata: AWSJSON
+}
+
+type PerformanceMetrics {
+  id: ID!
+  userId: String!
+  period: String!
+  totalReturn: Float!
+  annualizedReturn: Float!
+  sharpeRatio: Float!
+  maxDrawdown: Float!
+  volatility: Float!
+  winRate: Float!
+  timestamp: AWSDateTime!
+}
+
+type RiskSettings {
+  id: ID!
+  userId: String!
+  maxPositionSize: Float!
+  maxDailyLoss: Float!
+  stopLossPercentage: Float!
+  takeProfitPercentage: Float!
+  maxLeverage: Float!
+  timestamp: AWSDateTime!
+}
+
+type UserProfile {
+  id: ID!
+  userId: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String
+  riskTolerance: String!
+  tradingExperience: String!
+  preferredBrokers: [String!]
+  notificationPreferences: AWSJSON
+  timestamp: AWSDateTime!
+}
+
+input CreateTradeSignalInput {
+  symbol: String!
+  side: String!
+  quantity: Float!
+  price: Float
+  orderType: String!
+  modelName: String!
+  confidence: Float
+  metadata: AWSJSON
+}
+
+input ExecuteTradeInput {
+  signalId: String!
+  broker: String!
+  quantity: Float
+  price: Float
+}
+
+input ClosePositionInput {
+  positionId: String!
+  quantity: Float
+}
+
+input UpdateRiskSettingsInput {
+  maxPositionSize: Float
+  maxDailyLoss: Float
+  stopLossPercentage: Float
+  takeProfitPercentage: Float
+  maxLeverage: Float
+}
+
+input UpdateUserProfileInput {
+  firstName: String
+  lastName: String
+  phone: String
+  riskTolerance: String
+  tradingExperience: String
+  preferredBrokers: [String!]
+  notificationPreferences: AWSJSON
+}
+
+type Query {
+  # Market Data
+  getMarketData(symbol: String!, limit: Int, startTime: AWSDateTime, endTime: AWSDateTime): [MarketData]
+  
+  # Trade Signals
+  getTradeSignals(limit: Int, offset: Int, symbol: String, status: String): [TradeSignal]
+  getTradeSignal(id: ID!): TradeSignal
+  
+  # Trade Executions
+  getTradeExecutions(limit: Int, offset: Int, symbol: String, status: String): [TradeExecution]
+  getTradeExecution(id: ID!): TradeExecution
+  
+  # Positions
+  getPositions(userId: String!): [Position]
+  getPosition(id: ID!): Position
+  
+  # Portfolio
+  getPortfolio(userId: String!): Portfolio
+  getPerformanceMetrics(userId: String!, period: String!): PerformanceMetrics
+  
+  # Risk Management
+  getRiskSettings(userId: String!): RiskSettings
+  getRiskAlerts(userId: String!, limit: Int): [RiskAlert]
+  
+  # Fraud Detection
+  getFraudAlerts(userId: String!, limit: Int): [FraudAlert]
+  
+  # User Profile
+  getUserProfile(userId: String!): UserProfile
+}
+
+type Mutation {
+  # Trade Signals
+  createTradeSignal(input: CreateTradeSignalInput!): TradeSignal
+  updateTradeSignal(id: ID!, input: CreateTradeSignalInput!): TradeSignal
+  deleteTradeSignal(id: ID!): Boolean
+  
+  # Trade Execution
+  executeTrade(input: ExecuteTradeInput!): TradeExecution
+  cancelTrade(executionId: ID!): TradeExecution
+  
+  # Position Management
+  closePosition(input: ClosePositionInput!): Position
+  updatePosition(id: ID!, quantity: Float, averagePrice: Float): Position
+  
+  # Portfolio Management
+  updatePortfolio(userId: String!, input: AWSJSON): Portfolio
+  
+  # Risk Management
+  updateRiskSettings(userId: String!, input: UpdateRiskSettingsInput!): RiskSettings
+  
+  # User Profile
+  updateUserProfile(userId: String!, input: UpdateUserProfileInput!): UserProfile
+  
+  # Fraud Detection
+  reportFraud(userId: String!, transactionId: String!, reason: String!): FraudAlert
+}
+
+type Subscription {
+  # Market Data Subscriptions
+  onMarketDataUpdate(symbol: String!): MarketData
+    @aws_subscribe(mutations: ["updateMarketData"])
+  
+  # Trade Signal Subscriptions
+  onTradeSignalCreated: TradeSignal
+    @aws_subscribe(mutations: ["createTradeSignal"])
+  
+  onTradeSignalUpdated(signalId: ID!): TradeSignal
+    @aws_subscribe(mutations: ["updateTradeSignal"])
+  
+  # Trade Execution Subscriptions
+  onTradeExecuted: TradeExecution
+    @aws_subscribe(mutations: ["executeTrade"])
+  
+  onTradeCancelled: TradeExecution
+    @aws_subscribe(mutations: ["cancelTrade"])
+  
+  # Position Subscriptions
+  onPositionUpdated(userId: String!): Position
+    @aws_subscribe(mutations: ["updatePosition", "closePosition"])
+  
+  # Portfolio Subscriptions
+  onPortfolioUpdated(userId: String!): Portfolio
+    @aws_subscribe(mutations: ["updatePortfolio"])
+  
+  # Risk Alert Subscriptions
+  onRiskAlert(userId: String!): RiskAlert
+    @aws_subscribe(mutations: ["createRiskAlert"])
+  
+  # Fraud Alert Subscriptions
+  onFraudAlert(userId: String!): FraudAlert
+    @aws_subscribe(mutations: ["reportFraud"])
+  
+  # Performance Metrics Subscriptions
+  onPerformanceUpdate(userId: String!): PerformanceMetrics
+    @aws_subscribe(mutations: ["updatePerformanceMetrics"])
+}

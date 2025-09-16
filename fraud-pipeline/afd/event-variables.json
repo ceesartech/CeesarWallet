@@ -1,0 +1,132 @@
+{
+  "eventVariables": [
+    {
+      "name": "ip",
+      "dataType": "STRING",
+      "dataSource": "EVENT",
+      "defaultValue": "",
+      "description": "IP address of the user",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "deviceId",
+      "dataType": "STRING",
+      "dataSource": "EVENT",
+      "defaultValue": "",
+      "description": "Device identifier",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "geo",
+      "dataType": "STRING",
+      "dataSource": "EVENT",
+      "defaultValue": "",
+      "description": "Geographic location",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "userTier",
+      "dataType": "STRING",
+      "dataSource": "EVENT",
+      "defaultValue": "FREE",
+      "description": "User subscription tier",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "orderNotional",
+      "dataType": "FLOAT",
+      "dataSource": "EVENT",
+      "defaultValue": "0.0",
+      "description": "Order notional value",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "userVelocity1m",
+      "dataType": "INTEGER",
+      "dataSource": "EVENT",
+      "defaultValue": "0",
+      "description": "User transaction velocity in 1 minute",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "ipVelocity1m",
+      "dataType": "INTEGER",
+      "dataSource": "EVENT",
+      "defaultValue": "0",
+      "description": "IP transaction velocity in 1 minute",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "deviceVelocity1m",
+      "dataType": "INTEGER",
+      "dataSource": "EVENT",
+      "defaultValue": "0",
+      "description": "Device transaction velocity in 1 minute",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "geoVelocity1m",
+      "dataType": "INTEGER",
+      "dataSource": "EVENT",
+      "defaultValue": "0",
+      "description": "Geographic transaction velocity in 1 minute",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "symbolVelocity1m",
+      "dataType": "INTEGER",
+      "dataSource": "EVENT",
+      "defaultValue": "0",
+      "description": "Symbol transaction velocity in 1 minute",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "assetClassVelocity1m",
+      "dataType": "INTEGER",
+      "dataSource": "EVENT",
+      "defaultValue": "0",
+      "description": "Asset class transaction velocity in 1 minute",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "authType",
+      "dataType": "STRING",
+      "dataSource": "EVENT",
+      "defaultValue": "",
+      "description": "Authentication type",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "success",
+      "dataType": "STRING",
+      "dataSource": "EVENT",
+      "defaultValue": "true",
+      "description": "Authentication success",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "amount",
+      "dataType": "FLOAT",
+      "dataSource": "EVENT",
+      "defaultValue": "0.0",
+      "description": "Payment amount",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "currency",
+      "dataType": "STRING",
+      "dataSource": "EVENT",
+      "defaultValue": "USD",
+      "description": "Payment currency",
+      "variableType": "AUTH_CODE"
+    },
+    {
+      "name": "paymentMethod",
+      "dataType": "STRING",
+      "dataSource": "EVENT",
+      "defaultValue": "",
+      "description": "Payment method",
+      "variableType": "AUTH_CODE"
+    }
+  ]
+}

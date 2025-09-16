@@ -1,0 +1,23 @@
+{
+  "detectors": [
+    {
+      "detectorId": "pre-trade-detector",
+      "description": "Pre-trade fraud detection detector",
+      "eventTypeName": "pre-trade-event",
+      "detectorVersionStatus": "DRAFT",
+      "rules": [
+        "high-velocity-rule",
+        "large-order-rule",
+        "suspicious-geo-rule"
+      ],
+      "modelVersions": [
+        "pre-trade-model"
+      ],
+      "outcomes": [
+        "APPROVE",
+        "REJECT",
+        "REVIEW"
+      ]
+    }
+  ]
+}

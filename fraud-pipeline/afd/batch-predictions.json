@@ -1,0 +1,21 @@
+{
+  "batchPredictions": [
+    {
+      "jobId": "pre-trade-batch-prediction-001",
+      "status": "IN_PROGRESS",
+      "detectorName": "pre-trade-detector",
+      "detectorVersion": "1.0",
+      "eventTypeName": "pre-trade-event",
+      "predictionTimestamp": "2024-01-01T00:00:00Z",
+      "jobArn": "arn:aws:frauddetector:us-east-1:123456789012:batch-prediction-job/pre-trade-batch-prediction-001",
+      "processedRecordsCount": 1000,
+      "totalRecordsCount": 10000,
+      "inputPath": "s3://fraud-detection-data/input/pre-trade-events.csv",
+      "outputPath": "s3://fraud-detection-data/output/pre-trade-predictions.csv",
+      "createdTime": "2024-01-01T00:00:00Z",
+      "lastUpdatedTime": "2024-01-01T00:00:00Z",
+      "finishedTime": null,
+      "failureReason": null
+    }
+  ]
+}

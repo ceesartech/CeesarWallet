@@ -1,0 +1,31 @@
+{
+  "rules": [
+    {
+      "detectorId": "pre-trade-detector",
+      "ruleId": "high-velocity-rule",
+      "ruleVersion": "1.0",
+      "description": "High velocity trading rule",
+      "expression": "ipVelocity1m > 10 OR deviceVelocity1m > 10 OR geoVelocity1m > 10",
+      "language": "DETECTORPL",
+      "outcomes": ["REJECT"]
+    },
+    {
+      "detectorId": "pre-trade-detector",
+      "ruleId": "large-order-rule",
+      "ruleVersion": "1.0",
+      "description": "Large order size rule",
+      "expression": "orderNotional > 100000 AND userTier = 'FREE'",
+      "language": "DETECTORPL",
+      "outcomes": ["REVIEW"]
+    },
+    {
+      "detectorId": "pre-trade-detector",
+      "ruleId": "suspicious-geo-rule",
+      "ruleVersion": "1.0",
+      "description": "Suspicious geographic location rule",
+      "expression": "geo IN ['CN', 'RU', 'KP']",
+      "language": "DETECTORPL",
+      "outcomes": ["REJECT"]
+    }
+  ]
+}

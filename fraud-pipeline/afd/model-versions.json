@@ -1,0 +1,68 @@
+{
+  "modelVersions": [
+    {
+      "modelId": "pre-trade-model",
+      "modelType": "ONLINE_FRAUD_INSIGHTS",
+      "modelVersionNumber": "1.0",
+      "description": "Pre-trade fraud detection model version 1.0",
+      "status": "TRAINING_IN_PROGRESS",
+      "trainingDataStartTime": "2024-01-01T00:00:00Z",
+      "trainingDataEndTime": "2024-01-31T23:59:59Z",
+      "evaluationDataStartTime": "2024-02-01T00:00:00Z",
+      "evaluationDataEndTime": "2024-02-07T23:59:59Z",
+      "trainingDataSource": "EXTERNAL_EVENTS",
+      "modelVariables": [
+        "ip",
+        "deviceId",
+        "geo",
+        "userTier",
+        "orderNotional",
+        "userVelocity1m",
+        "ipVelocity1m",
+        "deviceVelocity1m",
+        "geoVelocity1m",
+        "symbolVelocity1m",
+        "assetClassVelocity1m",
+        "authType",
+        "success",
+        "amount",
+        "currency",
+        "paymentMethod"
+      ],
+      "labelSchema": {
+        "labelMapper": {
+          "FRAUD": "1",
+          "LEGIT": "0"
+        },
+        "unlabeledEventsTreatment": "IGNORE"
+      },
+      "trainingDataSchema": {
+        "modelVariables": [
+          "ip",
+          "deviceId",
+          "geo",
+          "userTier",
+          "orderNotional",
+          "userVelocity1m",
+          "ipVelocity1m",
+          "deviceVelocity1m",
+          "geoVelocity1m",
+          "symbolVelocity1m",
+          "assetClassVelocity1m",
+          "authType",
+          "success",
+          "amount",
+          "currency",
+          "paymentMethod"
+        ],
+        "labelSchema": {
+          "labelMapper": {
+            "FRAUD": "1",
+            "LEGIT": "0"
+          },
+          "unlabeledEventsTreatment": "IGNORE"
+        }
+      }
+    }
+  ]
+}

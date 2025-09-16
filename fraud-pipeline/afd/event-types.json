@@ -1,0 +1,49 @@
+{
+  "eventTypes": [
+    {
+      "name": "pre-trade-event",
+      "description": "Pre-trade fraud detection event",
+      "eventVariables": [
+        "ip",
+        "deviceId",
+        "geo",
+        "userTier",
+        "orderNotional",
+        "userVelocity1m",
+        "ipVelocity1m",
+        "deviceVelocity1m",
+        "geoVelocity1m",
+        "symbolVelocity1m",
+        "assetClassVelocity1m",
+        "authType",
+        "success",
+        "amount",
+        "currency",
+        "paymentMethod"
+      ],
+      "labels": [
+        "FRAUD",
+        "LEGIT"
+      ],
+      "entityTypes": [
+        "customer"
+      ],
+      "eventIngestion": "ENABLED",
+      "ingestionDataSource": "EVENT",
+      "eventIngestionDataStore": "CLOUD_TRAIL",
+      "tags": [
+        {
+          "key": "Environment",
+          "value": "Production"
+        },
+        {
+          "key": "Project",
+          "value": "CeesarWallet"
+        }
+      ],
+      "arn": "arn:aws:frauddetector:us-east-1:123456789012:event-type/pre-trade-event",
+      "createdTime": "2024-01-01T00:00:00Z",
+      "lastUpdatedTime": "2024-01-01T00:00:00Z"
+    }
+  ]
+}

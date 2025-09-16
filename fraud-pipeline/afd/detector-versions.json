@@ -1,0 +1,43 @@
+{
+  "detectorVersions": [
+    {
+      "detectorId": "pre-trade-detector",
+      "detectorVersionId": "1.0",
+      "description": "Pre-trade fraud detection detector version 1.0",
+      "eventTypeName": "pre-trade-event",
+      "detectorVersionStatus": "ACTIVE",
+      "lastUpdatedTime": "2024-01-01T00:00:00Z",
+      "createdTime": "2024-01-01T00:00:00Z",
+      "rules": [
+        {
+          "detectorId": "pre-trade-detector",
+          "ruleId": "high-velocity-rule",
+          "ruleVersion": "1.0"
+        },
+        {
+          "detectorId": "pre-trade-detector",
+          "ruleId": "large-order-rule",
+          "ruleVersion": "1.0"
+        },
+        {
+          "detectorId": "pre-trade-detector",
+          "ruleId": "suspicious-geo-rule",
+          "ruleVersion": "1.0"
+        }
+      ],
+      "modelVersions": [
+        {
+          "modelId": "pre-trade-model",
+          "modelVersionNumber": "1.0"
+        }
+      ],
+      "outcomes": [
+        "APPROVE",
+        "REJECT",
+        "REVIEW"
+      ],
+      "ruleExecutionMode": "FIRST_MATCHED",
+      "arn": "arn:aws:frauddetector:us-east-1:123456789012:detector/pre-trade-detector/version/1.0"
+    }
+  ]
+}

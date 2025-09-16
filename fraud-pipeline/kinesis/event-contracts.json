@@ -1,0 +1,288 @@
+{
+  "eventContracts": {
+    "preTradeEvent": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["PRE_TRADE"]
+        },
+        "eventId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "ip": {
+          "type": "string",
+          "format": "ipv4"
+        },
+        "deviceId": {
+          "type": "string"
+        },
+        "geo": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "assetClass": {
+          "type": "string",
+          "enum": ["EQUITY", "FX", "CRYPTO", "COMMODITY", "BOND"]
+        },
+        "qty": {
+          "type": "string"
+        },
+        "notional": {
+          "type": "string"
+        },
+        "ts": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["type", "eventId", "userId", "symbol", "assetClass", "qty", "notional", "ts"]
+    },
+    "postTradeEvent": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["POST_TRADE"]
+        },
+        "eventId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "ip": {
+          "type": "string",
+          "format": "ipv4"
+        },
+        "deviceId": {
+          "type": "string"
+        },
+        "geo": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "assetClass": {
+          "type": "string",
+          "enum": ["EQUITY", "FX", "CRYPTO", "COMMODITY", "BOND"]
+        },
+        "qty": {
+          "type": "string"
+        },
+        "notional": {
+          "type": "string"
+        },
+        "executionPrice": {
+          "type": "string"
+        },
+        "fees": {
+          "type": "string"
+        },
+        "ts": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["type", "eventId", "userId", "symbol", "assetClass", "qty", "notional", "executionPrice", "fees", "ts"]
+    },
+    "authEvent": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["AUTH"]
+        },
+        "eventId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "ip": {
+          "type": "string",
+          "format": "ipv4"
+        },
+        "deviceId": {
+          "type": "string"
+        },
+        "geo": {
+          "type": "string"
+        },
+        "authType": {
+          "type": "string",
+          "enum": ["LOGIN", "LOGOUT", "FAILED_LOGIN", "MFA_REQUIRED"]
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "ts": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["type", "eventId", "userId", "authType", "success", "ts"]
+    },
+    "paymentEvent": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["PAYMENT"]
+        },
+        "eventId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "ip": {
+          "type": "string",
+          "format": "ipv4"
+        },
+        "deviceId": {
+          "type": "string"
+        },
+        "geo": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "paymentMethod": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "ts": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["type", "eventId", "userId", "amount", "currency", "success", "ts"]
+    },
+    "fraudScoreEvent": {
+      "type": "object",
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "action": {
+          "type": "string",
+          "enum": ["ALLOW", "BLOCK", "MFA", "SHADOW"]
+        },
+        "explanations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "modelVersion": {
+          "type": "string"
+        },
+        "ts": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["eventId", "userId", "score", "action", "ts"]
+    }
+  },
+  "streams": {
+    "eventsRaw": {
+      "name": "events-raw",
+      "shards": 4,
+      "retentionPeriod": 24,
+      "eventTypes": ["PRE_TRADE", "POST_TRADE", "AUTH", "PAYMENT"]
+    },
+    "eventsScored": {
+      "name": "events-scored",
+      "shards": 2,
+      "retentionPeriod": 168,
+      "eventTypes": ["FRAUD_SCORE"]
+    }
+  },
+  "fraudDetector": {
+    "detectors": {
+      "preTradeDetector": {
+        "detectorId": "pre-trade-detector",
+        "eventTypeName": "pre_trade",
+        "entityType": "userId",
+        "variables": [
+          "ip",
+          "deviceId",
+          "geo",
+          "userTier",
+          "orderNotional",
+          "userVelocity1m",
+          "ipVelocity1m",
+          "deviceVelocity1m",
+          "geoVelocity1m",
+          "symbolVelocity1m",
+          "assetClassVelocity1m"
+        ],
+        "outcomes": ["ALLOW", "BLOCK", "MFA", "SHADOW"]
+      },
+      "authDetector": {
+        "detectorId": "auth-detector",
+        "eventTypeName": "auth",
+        "entityType": "userId",
+        "variables": [
+          "ip",
+          "deviceId",
+          "geo",
+          "authType",
+          "success",
+          "userVelocity1h",
+          "ipVelocity1h",
+          "deviceVelocity1h",
+          "geoVelocity1h",
+          "failedAuths1h"
+        ],
+        "outcomes": ["ALLOW", "BLOCK", "MFA"]
+      },
+      "paymentDetector": {
+        "detectorId": "payment-detector",
+        "eventTypeName": "payment",
+        "entityType": "userId",
+        "variables": [
+          "ip",
+          "deviceId",
+          "geo",
+          "amount",
+          "currency",
+          "paymentMethod",
+          "success",
+          "userVelocity1d",
+          "ipVelocity1d",
+          "amountVelocity1d",
+          "paymentMethodVelocity1d"
+        ],
+        "outcomes": ["ALLOW", "BLOCK", "MFA"]
+      }
+    }
+  }
+}

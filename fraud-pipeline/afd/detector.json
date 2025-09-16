@@ -1,0 +1,85 @@
+{
+  "detectorId": "pre-trade-detector",
+  "detectorVersionId": "1",
+  "description": "Pre-trade fraud detection for trading platform",
+  "eventTypeName": "pre_trade",
+  "detectorStatus": "ACTIVE",
+  "rules": [
+    {
+      "ruleId": "high-velocity-rule",
+      "ruleVersion": "1",
+      "description": "Block high velocity trading",
+      "expression": "userVelocity1m > 10",
+      "outcomes": ["BLOCK"],
+      "tags": {
+        "risk-level": "high",
+        "category": "velocity"
+      }
+    },
+    {
+      "ruleId": "large-transaction-rule",
+      "ruleVersion": "1",
+      "description": "Require MFA for large transactions",
+      "expression": "orderNotional > 50000",
+      "outcomes": ["MFA"],
+      "tags": {
+        "risk-level": "medium",
+        "category": "amount"
+      }
+    },
+    {
+      "ruleId": "unusual-geo-rule",
+      "ruleVersion": "1",
+      "description": "Block transactions from unusual geographic locations",
+      "expression": "geoVelocity1m > 3",
+      "outcomes": ["BLOCK"],
+      "tags": {
+        "risk-level": "high",
+        "category": "geography"
+      }
+    },
+    {
+      "ruleId": "device-churn-rule",
+      "ruleVersion": "1",
+      "description": "Require MFA for new devices",
+      "expression": "deviceVelocity1m > 2",
+      "outcomes": ["MFA"],
+      "tags": {
+        "risk-level": "medium",
+        "category": "device"
+      }
+    },
+    {
+      "ruleId": "ip-risk-rule",
+      "ruleVersion": "1",
+      "description": "Block transactions from high-risk IPs",
+      "expression": "ipVelocity1m > 5",
+      "outcomes": ["BLOCK"],
+      "tags": {
+        "risk-level": "high",
+        "category": "ip"
+      }
+    }
+  ],
+  "modelVersions": [
+    {
+      "modelId": "pre-trade-model",
+      "modelType": "ONLINE_FRAUD_INSIGHTS",
+      "modelVersionNumber": "1.0",
+      "status": "ACTIVE",
+      "trainingDataSource": "s3://fraud-detection-data/training/",
+      "validationDataSource": "s3://fraud-detection-data/validation/",
+      "performanceMetrics": {
+        "accuracy": 0.95,
+        "precision": 0.92,
+        "recall": 0.88,
+        "f1Score": 0.90
+      }
+    }
+  ],
+  "tags": {
+    "environment": "production",
+    "team": "fraud-prevention",
+    "version": "1.0"
+  }
+}
