@@ -91,3 +91,30 @@ web-build/
 
 ### Metro ###
 .metro-health-check*
+
+### Next.js ###
+.next/
+out/
+
+### Python ###
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+### Mobile App Builds ###
+*.apk
+*.ipa
+*.aab
+
+### Build Artifacts ###
+dist/
+build/
+*.log
+*.pid
