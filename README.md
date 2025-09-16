@@ -123,7 +123,7 @@ graph TB
 - **Containerization**: Docker, ECS
 
 #### **Infrastructure**
-- **Cloud**: AWS (Account: 476114151082)
+- **Cloud**: AWS 
 - **IaC**: AWS CDK v2
 - **CI/CD**: GitHub Actions
 - **Monitoring**: CloudWatch, Sentry, Datadog
